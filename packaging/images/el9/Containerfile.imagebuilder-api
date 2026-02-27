@@ -4,12 +4,13 @@ WORKDIR /app
 # Switch to root for build operations
 USER 0
 
+COPY . .
 # Copy dependencies first (most stable)
-COPY go.mod go.sum ./
+#COPY go.mod go.sum ./
 
 # Download dependencies (cached layer)
-RUN --mount=type=cache,target=/opt/app-root/src/go/pkg/mod \
-    go mod download
+#RUN --mount=type=cache,target=/opt/app-root/src/go/pkg/mod \
+#    go mod download
 
 # Copy build tools and configs
 COPY Makefile .
@@ -35,8 +36,8 @@ ENV SOURCE_GIT_COMMIT=${SOURCE_GIT_COMMIT}
 
 # Use BuildKit cache mounts for Go caching
 RUN --mount=type=cache,target=/opt/app-root/src/.cache/go-build \
-    --mount=type=cache,target=/opt/app-root/src/go/pkg/mod \
     make build-imagebuilder-api
+#    --mount=type=cache,target=/opt/app-root/src/go/pkg/mod \
 
 FROM quay.io/flightctl/flightctl-base:9.7-1762965531
 WORKDIR /app

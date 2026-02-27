@@ -1,3 +1,5 @@
+# Force the Makefile to use the newly extracted Go binary
+export PATH := /usr/local/go/bin:$(PATH)
 # Enable BuildKit for all container buildsmakefi
 export DOCKER_BUILDKIT=1
 export BUILDKIT_PROGRESS=plain
@@ -142,7 +144,7 @@ generate-proto:
 tidy:
 	git ls-files go.mod '**/*go.mod' -z | xargs -0 -I{} bash -xc 'cd $$(dirname {}) && go mod tidy -v'
 
-build: bin build-cli build-pam-issuer
+build: setup-go bin build-cli build-pam-issuer
 	$(GOENV) GOOS=$(GOOS) GOARCH=$(GOARCH) go build -buildvcs=false $(GO_BUILD_FLAGS) -o $(GOBIN) \
 		./cmd/devicesimulator \
 		./cmd/flightctl-agent \
@@ -404,6 +406,17 @@ deb-sources: bin/arm64 bin/amd64 bin/riscv64
 deb: bin/arm64 bin/amd64 bin/riscv64
 	ln -f -s packaging/debian debian
 	debuild -us -uc -b
+
+.PHONY: setup-go
+
+setup-go:
+	@echo "==> Setting up offline Go toolchain..."
+	# 1. Remove old Go and extract the new one (requires sudo if using /usr/local)
+	sudo rm -rf /usr/local/go
+	sudo tar -C /usr/local -xzf go1.24.6.linux-amd64.tar.gz
+	# 2. Configure Go for strict offline mode using the absolute path to be safe
+	/usr/local/go/bin/go env -w GOTOOLCHAIN=local
+	/usr/local/go/bin/go env -w GOPROXY=off
 
 clean: clean-agent-vm clean-e2e-agent-images clean-quadlets clean-swtpm-certs clean-e2e-certs
 	- kind delete cluster

@@ -4,12 +4,13 @@ WORKDIR /app
 # Switch to root for build operations
 USER 0
 
-# Copy dependencies first (most stable)
-COPY go.mod go.sum ./
+COPY . .
+## Copy dependencies first (most stable)
+#COPY go.mod go.sum ./
 
-# Download dependencies (cached layer)
-RUN --mount=type=cache,target=/opt/app-root/src/go/pkg/mod \
-    go mod download
+## Download dependencies (cached layer)
+#RUN --mount=type=cache,target=/opt/app-root/src/go/pkg/mod \
+#    go mod download
 
 # Copy build tools and configs
 COPY Makefile .

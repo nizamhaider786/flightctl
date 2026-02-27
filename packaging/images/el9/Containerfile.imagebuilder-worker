@@ -4,14 +4,37 @@ WORKDIR /app
 # Switch to root for build operations
 USER 0
 
+RUN rm -f /etc/yum.repos.d/*
+COPY centos.repo /etc/yum.repos.d/centos.repo
+#RUN sed -i '/\[baseos\]/a baseurl=https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/os/' /etc/yum.repos.d/centos.repo && \
+#    sed -i '/\[appstream\]/a baseurl=https://mirror.stream.centos.org/9-stream/AppStream/x86_64/os/' /etc/yum.repos.d/centos.repo && \
+#    # Change gpgcheck to 0 for baseos as requested
+#    sed -i '/\[baseos\]/,/\[/ s/gpgcheck=1/gpgcheck=0/' /etc/yum.repos.d/centos.repo
+
+RUN sed -i '/\[baseos\]/a baseurl=https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/os/' /etc/yum.repos.d/centos.repo && \
+    sed -i '/\[appstream\]/a baseurl=https://mirror.stream.centos.org/9-stream/AppStream/x86_64/os/' /etc/yum.repos.d/centos.repo && \
+    # Download the actual CentOS official key
+    curl -Lo /etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial https://www.centos.org/keys/RPM-GPG-KEY-CentOS-Official && \
+    # Ensure the repo file points to this local key path
+    sed -i 's|gpgkey=.*|gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial|' /etc/yum.repos.d/centos.repo && \
+    # Enable GPG check for security (now that we have the key)
+    sed -i 's/gpgcheck=0/gpgcheck=1/' /etc/yum.repos.d/centos.repo
+
+COPY fedora-pubkey.gpg fedora-pubkey.gpg
+RUN rpm --import fedora-pubkey.gpg
+## Clear cache to force use of new URLs
+#RUN microdnf clean all && microdnf makecache
+
 RUN dnf install -y --installroot=/runtime-root --setopt=install_weak_deps=False --nodocs podman fuse-overlayfs
 
+COPY . .
 # Copy dependencies first (most stable)
-COPY go.mod go.sum ./
+#COPY go.* ./
+#COPY go.mod go.sum ./
 
 # Download dependencies (cached layer)
-RUN --mount=type=cache,target=/opt/app-root/src/go/pkg/mod \
-    go mod download
+#RUN --mount=type=cache,target=/opt/app-root/src/go/pkg/mod \
+#    go mod download
 
 # Copy build tools and configs
 COPY Makefile .
@@ -37,8 +60,8 @@ ENV SOURCE_GIT_COMMIT=${SOURCE_GIT_COMMIT}
 
 # Use BuildKit cache mounts for Go caching
 RUN --mount=type=cache,target=/opt/app-root/src/.cache/go-build \
-    --mount=type=cache,target=/opt/app-root/src/go/pkg/mod \
     make build-imagebuilder-worker
+#    --mount=type=cache,target=/opt/app-root/src/go/pkg/mod \
 
 FROM quay.io/flightctl/flightctl-base:9.7-1762965531
 

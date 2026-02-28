@@ -42,11 +42,12 @@ RUN mkdir -p /runtime-root && \
     dnf install -y --installroot=/runtime-root --releasever=9 --setopt=install_weak_deps=False \
         sssd-client
 
+COPY . .
 # Copy dependencies first (most stable)
-COPY go.mod go.sum ./
+#COPY go.mod go.sum ./
 
-RUN --mount=type=bind,src=./download,target=/go/pkg/mod/download,ro \
-    echo "Using host Go module cache"
+#RUN --mount=type=bind,src=./download,target=/go/pkg/mod/download,ro \
+#    echo "Using host Go module cache"
 
 # Download dependencies (cached layer)
 #RUN --mount=type=cache,target=/go/pkg/mod \
@@ -74,8 +75,8 @@ ENV SOURCE_GIT_COMMIT=${SOURCE_GIT_COMMIT}
 
 # Use BuildKit cache mounts for Go caching
 RUN --mount=type=cache,target=/opt/app-root/src/.cache/go-build \
-    --mount=type=bind,src=./download,target=/opt/app-root/src/go/pkg/mod/download \
     make build-pam-issuer
+#    --mount=type=bind,src=./download,target=/opt/app-root/src/go/pkg/mod/download \
 
 FROM quay.io/flightctl/flightctl-base:9.7-1762965531
 WORKDIR /app

@@ -3,8 +3,10 @@
 # This section contains parameters common to all the components in the deployment, including sub-charts, ui charts, etc.
 
 global:
+  exposeServicesMethod: "nodePort"
+  baseDomain: "flightctl.local"
   # -- Enable OpenShift extensions - one of 'auto', 'true', 'false'.
-  enableOpenShiftExtensions: "auto"
+  enableOpenShiftExtensions: "false"
   # -- Enable MultiCluster Engine extensions - one of 'auto', 'true', 'false'.
   enableMulticlusterExtensions: "auto"
   # -- Namespace where MultiCluster Engine is installed. Used for creating discovery ConfigMap and RBAC bindings.
@@ -34,7 +36,7 @@ global:
     # -- The custom CA cert.
     caCert: ""
     # -- True if verification of authority TLS cert should be skipped.
-    insecureSkipTlsVerify: false
+    insecureSkipTlsVerify: true
     k8s:
       # -- API URL of k8s cluster that will be used as authentication authority
       apiUrl: https://kubernetes.default.svc
@@ -203,9 +205,8 @@ alertmanager:
 api:
   image:
     # -- API server container image
-    image: quay.io/flightctl/flightctl-api
-    # -- API server image tag (leave empty to use chart appVersion)
-    tag: ""
+    image: 10.200.170.11:8082/flightctl/flightctl-api
+    tag: "v1.2.0-main-183-g8992db6d"
     # -- Image pull policy for API server container
     pullPolicy: ""
   # Rate limiting configuration - enabled by default for production
@@ -240,9 +241,8 @@ cliArtifacts:
   enabled: true
   image:
     # -- CLI artifacts container image
-    image: quay.io/flightctl/flightctl-cli-artifacts
-    # -- CLI artifacts image tag
-    tag: ""
+    image: 10.200.170.11:8082/flightctl/flightctl-cli-artifacts
+    tag: "v1.2.0-main-183-g8992db6d"
     # -- Image pull policy for CLI artifacts container
     pullPolicy: ""
   # -- Additional labels for CLI Artifacts routes.
@@ -252,9 +252,8 @@ cliArtifacts:
 worker:
   image:
     # -- Worker container image
-    image: quay.io/flightctl/flightctl-worker
-    # -- Worker image tag
-    tag: ""
+    image: 10.200.170.11:8082/flightctl/flightctl-worker
+    tag: "v1.2.0-main-183-g8992db6d"
     # -- Image pull policy for worker container
     pullPolicy: ""
   # -- Allow flightctl-worker to access secrets at the cluster level for embedding in device configs
@@ -264,9 +263,8 @@ worker:
 periodic:
   image:
     # -- Periodic container image
-    image: quay.io/flightctl/flightctl-periodic
-    # -- Periodic image tag
-    tag: ""
+    image: 10.200.170.11:8082/flightctl/flightctl-periodic
+    tag: "v1.2.0-main-183-g8992db6d"
     # -- Image pull policy for periodic container
     pullPolicy: ""
   # -- Number of periodic consumers
@@ -278,9 +276,8 @@ alertExporter:
   enabled: true
   image:
     # -- Alert exporter container image
-    image: quay.io/flightctl/flightctl-alert-exporter
-    # -- Alert exporter image tag
-    tag: ""
+    image: 10.200.170.11:8082/flightctl/flightctl-alert-exporter
+    tag: "v1.2.0-main-183-g8992db6d"
     # -- Image pull policy for alert exporter container
     pullPolicy: ""
 
@@ -290,9 +287,8 @@ alertmanagerProxy:
   enabled: true
   image:
     # -- Alertmanager proxy container image
-    image: quay.io/flightctl/flightctl-alertmanager-proxy
-    # -- Alertmanager proxy image tag
-    tag: ""
+    image: 10.200.170.11:8082/flightctl/flightctl-alertmanager-proxy
+    tag: "v1.2.0-main-183-g8992db6d"
     # -- Image pull policy for Alertmanager proxy container
     pullPolicy: ""
   
@@ -302,9 +298,9 @@ imageBuilderApi:
   enabled: true
   image:
     # -- ImageBuilder API container image
-    image: quay.io/flightctl/flightctl-imagebuilder-api
+    image: 10.200.170.11:8082/flightctl/flightctl-imagebuilder-api
     # -- ImageBuilder API image tag
-    tag: ""
+    tag: "v1.2.0-main-183-g8992db6d"
     # -- Image pull policy for ImageBuilder API container
     pullPolicy: ""
 
@@ -316,9 +312,9 @@ imageBuilderWorker:
   replicas: 1
   image:
     # -- ImageBuilder Worker container image
-    image: quay.io/flightctl/flightctl-imagebuilder-worker
+    image: 10.200.170.11:8082/flightctl/flightctl-imagebuilder-worker
     # -- ImageBuilder Worker image tag
-    tag: ""
+    tag: "v1.2.0-main-183-g8992db6d"
     # -- Image pull policy for ImageBuilder Worker container
     pullPolicy: ""
   # -- Log level for the imagebuilder worker
@@ -341,9 +337,9 @@ imageBuilderWorker:
 telemetryGateway:
   image:
     # -- Telemetry gateway container image
-    image: quay.io/flightctl/flightctl-telemetry-gateway
+    image: 10.200.170.11:8082/flightctl/flightctl-telemetry-gateway
     # -- Telemetry gateway image tag
-    tag: ""
+    tag: "v1.2.0-main-183-g8992db6d"
     # -- Image pull policy for Telemetry gateway container
     pullPolicy: ""
   additionalRouteLabels: null
@@ -354,16 +350,15 @@ ui:
   enabled: true
   image:
     # -- UI container image
-    image: quay.io/flightctl/flightctl-ui
+    image: 10.200.170.11:8082/flightctl/flightctl-ui
+    tag: "custom-v4"
     # -- UI Plugin container image
     pluginImage: quay.io/flightctl/flightctl-ocp-ui
-    # -- UI container image tag
-    tag: ""
     # -- Image pull policy for UI container
-    pullPolicy: ""
+    pullPolicy: "IfNotPresent"
   auth:
     # -- Set to true if auth TLS certificate validation should be skipped.
-    insecureSkipTlsVerify: false
+    insecureSkipTlsVerify: true
     # -- A custom CA cert for Auth TLS.
     caCert: ""
   # -- Additional labels for UI routes.
@@ -383,9 +378,8 @@ clusterCli:
 dbSetup:
   image:
     # -- Database setup container image
-    image: quay.io/flightctl/flightctl-db-setup
-    # -- Database setup image tag
-    tag: ""
+    image: 10.200.170.11:8082/flightctl/flightctl-db-setup
+    tag: "v1.2.0-main-183-g8992db6d"
     # -- Image pull policy for database setup container
     pullPolicy: ""
   # Database wait configuration (optional)

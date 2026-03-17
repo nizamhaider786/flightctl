@@ -21,29 +21,29 @@ community:
       image: quay.io/openshift/origin-cli
       tag: "4.20.0"
     api:
-      image: quay.io/flightctl/flightctl-api
+      image: 10.200.170.11:8082/flightctl/flightctl-api:v1.2.0-main-183-g8992db6d
     cliArtifacts:
-      image: quay.io/flightctl/flightctl-cli-artifacts
+      image: 10.200.170.11:8082/flightctl/flightctl-cli-artifacts:v1.2.0-main-183-g8992db6d
     worker:
-      image: quay.io/flightctl/flightctl-worker
+      image: 10.200.170.11:8082/flightctl/flightctl-worker:v1.2.0-main-183-g8992db6d
     periodic:
-      image: quay.io/flightctl/flightctl-periodic
+      image: 10.200.170.11:8082/flightctl/flightctl-periodic:v1.2.0-main-183-g8992db6d
     alertExporter:
-      image: quay.io/flightctl/flightctl-alert-exporter
+      image: 10.200.170.11:8082/flightctl/flightctl-alert-exporter:v1.2.0-main-183-g8992db6d
     alertmanagerProxy:
-      image: quay.io/flightctl/flightctl-alertmanager-proxy
+      image: 10.200.170.11:8082/flightctl/flightctl-alertmanager-proxy:v1.2.0-main-183-g8992db6d
     imageBuilderApi:
-      image: quay.io/flightctl/flightctl-imagebuilder-api
+      image: 10.200.170.11:8082/flightctl/flightctl-imagebuilder-api:v1.2.0-main-183-g8992db6d
     imageBuilderWorker:
-      image: quay.io/flightctl/flightctl-imagebuilder-worker
+      image: 10.200.170.11:8082/flightctl/flightctl-imagebuilder-worker:v1.2.0-main-183-g8992db6d
     ui:
-      image: quay.io/flightctl/flightctl-ui
+      image: 10.200.170.11:8082/flightctl/flightctl-ui:latest
     uiPlugin:
       image: quay.io/flightctl/flightctl-ocp-ui
     dbSetup:
-      image: quay.io/flightctl/flightctl-db-setup
+      image: 10.200.170.11:8082/flightctl/flightctl-db-setup:v1.2.0-main-183-g8992db6d
     telemetryGateway:
-      image: quay.io/flightctl/flightctl-telemetry-gateway
+      image: 10.200.170.11:8082/flightctl/flightctl-telemetry-gateway:v1.2.0-main-183-g8992db6d
 redhat:
   name: redhat-rhem
   description: A helm chart for Red Hat Edge Manager
